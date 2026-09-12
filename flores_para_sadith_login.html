@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Flores para Sadith</title>
+<style>
+  :root{
+    --cream:#f5efe0;
+    --ink:#3a2f1f;
+    --sun:#f6c93b;
+    --sun-dark:#c98f1f;
+    --stem:#6b4a1f;
+    --pink1:#8a0e4a;
+    --pink2:#c2185b;
+    --error:#b23a3a;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    height:100%;
+    font-family:'Georgia', 'Iowan Old Style', serif;
+  }
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.05) 0, transparent 40%),
+      radial-gradient(circle at 85% 75%, rgba(255,255,255,0.06) 0, transparent 45%),
+      linear-gradient(160deg, var(--pink1), var(--pink2) 55%, #4a0a2e 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .heart-bg{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+  }
+  .heart-bg span{
+    position:absolute;
+    color:rgba(255,255,255,0.10);
+    font-size:1.4rem;
+    animation:drift 12s linear infinite;
+  }
+  @keyframes drift{
+    0%{transform:translateY(0) rotate(0deg);}
+    100%{transform:translateY(-120vh) rotate(20deg);}
+  }
+  .card{
+    position:relative;
+    z-index:2;
+    background:var(--cream);
+    border-radius:28px;
+    max-width:460px;
+    width:100%;
+    padding:40px 32px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.35);
+    text-align:center;
+  }
+  .eyebrow{
+    color:var(--sun-dark);
+    font-size:0.8rem;
+    letter-spacing:1px;
+    font-style:italic;
+    margin-bottom:6px;
+  }
+  h1{
+    color:var(--ink);
+    font-size:1.5rem;
+    margin:0 0 22px 0;
+    font-weight:400;
+  }
+  input{
+    width:100%;
+    padding:13px 16px;
+    border-radius:10px;
+    border:1.5px solid #d8cba5;
+    background:#fffdf8;
+    font-size:1rem;
+    font-family:inherit;
+    color:var(--ink);
+    margin-bottom:14px;
+    outline:none;
+    transition:border-color 0.2s;
+  }
+  input:focus{border-color:var(--sun-dark);}
+  button{
+    width:100%;
+    padding:13px 16px;
+    border-radius:10px;
+    border:none;
+    background:var(--sun-dark);
+    color:#fff8e6;
+    font-size:1rem;
+    font-family:inherit;
+    cursor:pointer;
+    transition:background 0.2s, transform 0.1s;
+  }
+  button:hover{background:#a8760f;}
+  button:active{transform:scale(0.98);}
+  .error{
+    color:var(--error);
+    font-size:0.85rem;
+    margin:-6px 0 14px 0;
+    min-height:18px;
+    font-style:italic;
+  }
+  .shake{animation:shake 0.4s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    25%{transform:translateX(-8px);}
+    75%{transform:translateX(8px);}
+  }
+  .step{display:none;}
+  .step.active{display:block;}
+
+  /* Reveal step */
+  #reveal{max-width:600px;}
+  .tree-wrap{
+    position:relative;
+    height:280px;
+    margin:10px 0 18px 0;
+  }
+  .trunk{
+    position:absolute;
+    bottom:0;
+    left:50%;
+    width:14px;
+    height:70px;
+    background:var(--stem);
+    transform:translateX(-50%);
+    border-radius:3px;
+  }
+  .heart-canopy{
+    position:absolute;
+    bottom:60px;
+    left:50%;
+    transform:translateX(-50%);
+    width:280px;
+    height:250px;
+  }
+  .flower{
+    position:absolute;
+    font-size:0;
+    width:26px;
+    height:26px;
+    opacity:0;
+    animation:bloom 0.6s forwards;
+  }
+  @keyframes bloom{
+    to{opacity:1; transform:scale(1);}
+    from{opacity:0; transform:scale(0.2);}
+  }
+  .flower svg{width:100%;height:100%;display:block;}
+  .dedication-text{
+    color:var(--ink);
+    font-size:1rem;
+    line-height:1.7;
+    text-align:left;
+    padding:0 6px;
+  }
+  .dedication-text h2{
+    font-size:1.4rem;
+    text-align:center;
+    margin:0 0 16px 0;
+    font-weight:400;
+    color:var(--ink);
+  }
+  .signature{
+    text-align:right;
+    font-style:italic;
+    margin-top:18px;
+    color:var(--sun-dark);
+  }
+</style>
+</head>
+<body>
+
+<div class="heart-bg" id="heartBg"></div>
+
+<div class="card" id="cardStep1">
+  <div class="step active" id="step1">
+    <div class="eyebrow">Antes de continuar</div>
+    <h1>¿Cuál es tu nombre?</h1>
+    <input type="text" id="nameInput" placeholder="Escribe tu nombre" autocomplete="off">
+    <div class="error" id="nameError"></div>
+    <button onclick="checkName()">Continuar</button>
+  </div>
+
+  <div class="step" id="step2">
+    <div class="eyebrow">Un paso más</div>
+    <h1>Confirma tu identidad con tu DNI</h1>
+    <input type="text" id="dniInput" placeholder="Número de DNI" autocomplete="off" inputmode="numeric">
+    <div class="error" id="dniError"></div>
+    <button onclick="checkDni()">Verificar</button>
+  </div>
+</div>
+
+<div class="card" id="reveal" style="display:none;">
+  <div class="eyebrow">🌻 un universo entero, hecho de flores amarillas 🌻</div>
+  <div class="tree-wrap">
+    <div class="trunk"></div>
+    <div class="heart-canopy" id="canopy"></div>
+  </div>
+  <div class="dedication-text">
+    <h2>Para Sadith Keitt Huaman Mateo</h2>
+    <p>Hay amistades que se sienten como un jardín entero: cálidas, constantes, llenas de luz. La tuya es así para mí — un campo de flores amarillas que no deja de crecer.</p>
+    <p>Gracias por cada risa, cada consejo y cada momento compartido. Este pequeño universo de flores es apenas una forma de decirte lo mucho que valoro tenerte como mi mejor amiga.</p>
+    <div class="signature">— con cariño, siempre</div>
+  </div>
+</div>
+
+<script>
+// Fondo de corazones flotantes
+const heartBg = document.getElementById('heartBg');
+const heartChars = ['♥','❤','♡'];
+for(let i=0;i<28;i++){
+  const s = document.createElement('span');
+  s.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
+  s.style.left = Math.random()*100 + '%';
+  s.style.top = 100 + Math.random()*20 + '%';
+  s.style.animationDelay = (Math.random()*12) + 's';
+  s.style.fontSize = (14 + Math.random()*22) + 'px';
+  heartBg.appendChild(s);
+}
+
+function normalize(str){
+  return str
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .replace(/\s+/g, ' ');
+}
+
+const validNames = [
+  'sadith',
+  'sadit',
+  'keitt',
+  'sadith keitt huaman mateo'
+];
+
+function showError(el, msg, inputEl){
+  el.textContent = msg;
+  inputEl.parentElement.classList.add('shake');
+  setTimeout(()=> inputEl.parentElement.classList.remove('shake'), 400);
+}
+
+function checkName(){
+  const input = document.getElementById('nameInput');
+  const errorEl = document.getElementById('nameError');
+  const value = normalize(input.value);
+
+  if(validNames.includes(value)){
+    errorEl.textContent = '';
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+  } else {
+    showError(errorEl, 'Ese nombre no coincide. Intenta de nuevo 🌻', input);
+  }
+}
+
+function checkDni(){
+  const input = document.getElementById('dniInput');
+  const errorEl = document.getElementById('dniError');
+  const value = input.value.trim();
+
+  if(value === '62290292'){
+    errorEl.textContent = '';
+    document.getElementById('cardStep1').style.display = 'none';
+    document.getElementById('reveal').style.display = 'block';
+    growTree();
+  } else {
+    showError(errorEl, 'El DNI no es correcto. Intenta de nuevo 🔒', input);
+  }
+}
+
+function sunflowerSVG(){
+  return `<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    ${[0,60,120,180,240,300].map(a => `
+      <ellipse cx="50" cy="30" rx="10" ry="20" fill="#f6c93b"
+        transform="rotate(${a} 50 50)"/>
+    `).join('')}
+    <circle cx="50" cy="50" r="9" fill="#8a5a1f"/>
+  </svg>`;
+}
+
+function growTree(){
+  const canopy = document.getElementById('canopy');
+  canopy.innerHTML = '';
+  const w = 280, h = 250;
+  const cx = w/2, cy = h/2 + 20;
+
+  // Genera posiciones dentro de una forma de corazón
+  const points = [];
+  for(let t = 0; t < Math.PI*2; t += 0.12){
+    const x = 16 * Math.pow(Math.sin(t),3);
+    const y = -(13*Math.cos(t) - 5*Math.cos(2*t) - 2*Math.cos(3*t) - Math.cos(4*t));
+    for(let r=0.3; r<=1; r+=0.22){
+      points.push({
+        x: cx + x*r*8,
+        y: cy + y*r*7
+      });
+    }
+  }
+
+  points.forEach((p, i)=>{
+    const f = document.createElement('div');
+    f.className = 'flower';
+    f.style.left = p.x + 'px';
+    f.style.top = p.y + 'px';
+    f.style.animationDelay = (i * 0.012) + 's';
+    f.innerHTML = sunflowerSVG();
+    canopy.appendChild(f);
+  });
+}
+</script>
+</body>
+</html>
